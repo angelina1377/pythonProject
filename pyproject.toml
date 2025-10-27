@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "pythonproject"
+version = "0.1.0"
+description = ""
+authors = ["Ангелина Павленко <angel-ina@mail.ru>"]
+license = "MIT"
+readme = "README.md"
+packages = [
+    { include = "pythonproject", from = "src" }
+]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
