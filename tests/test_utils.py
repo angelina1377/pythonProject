@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import  json
+=======
+import json
+>>>>>>> origin/develop
 import os
 import pytest
 from src.python_project import Product, Category
