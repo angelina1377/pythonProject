@@ -10,6 +10,15 @@ class Product:
         self.price = price
         self.quantity = quantity
 
+    def __str__(self):
+        return f'Название продукта:{self.name}, {self.price} руб. Остаток: {self.quantity} шт.'
+
+    def __add__(self, other):
+        if not isinstance(other, Product):
+            raise TypeError("Можно складывать только объекты класса Product")
+        total_value = self.price * self.quantity + other.price * other.quantity
+        return total_value
+
 
 class Category:
     name:str
@@ -24,6 +33,14 @@ class Category:
         self.products = products if products else []
         Category.category_count += 1
         Category.product_count = len(products)
+
+    def __str__(self):
+        total_quantity = sum(product.quantity for product in self.products) # Проходим по всем продуктам в self.products
+                                                                            # берет у каждого атрибут quantity
+                                                                            # суммирует все значения
+        return f'Название категории:{self.name}, количество продуктов: {total_quantity} шт.'
+
+
 
 if __name__ == "__main__":
     product1 = Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5)
