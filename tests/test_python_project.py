@@ -57,7 +57,8 @@ def test_category_empty_products():
     assert empty_category.products == []  # Проверяем пустой список продуктов
     assert Category.product_count == 0  # Проверяем счетчик продуктов
 
-#
+#Сложение двух объектов Product одного типа (одинаковые название, цена, описание).
+#тест подтверждает базовую логику сложения товаров одного типа
 def test_product_addition_same_type():
     p1 = Product("Чайник", "Металлический", 1500.0, 3)
     p2 = Product("Чайник", "Металлический", 1500.0, 7)
@@ -66,17 +67,22 @@ def test_product_addition_same_type():
     assert result.name == "Чайник"
     assert result.quantity == 10
     assert result.price == 1500.0
-    assert isinstance(result, Product)
+    assert isinstance(result, Product)# гарантирует, что не появился другой класс.
 
+#Попытка сложить Product и Smartphone (разные классы)
+#тест защищает от некорректного смешивания разных товаров
 def test_product_addition_different_types_raises_error():
     p = Product("Книга", "Фантастика", 499.0, 10)
     s = Smartphone("iPhone", "15 Pro", 100000.0, 2, "high", "15 Pro", "256GB", "Black")
 
-    with pytest.raises(TypeError) as excinfo:
+    with pytest.raises(TypeError) as excinfo:# это стандартный способ проверить, что код должен вызвать ошибку.
         p + s
 
     assert "Нельзя складывать товары разных типов" in str(excinfo.value)
 
+#Корректность создания объекта Smartphone
+#все атрибуты (name, price, efficiency и др.) передаются в __init__ и сохраняются;
+#нет «потерянных» или неправильно присвоенных значений.
 def test_smartphone_creation():
     s = Smartphone("iPhone", "15 Pro", 100000.0, 2, "high", "15 Pro", "256GB", "Black")
     assert s.name == "iPhone"
@@ -88,8 +94,11 @@ def test_smartphone_creation():
     assert s.memory == "256GB"
     assert s.color == "Black"
 
-
-
+#Сложение двух Smartphone с одинаковыми характеристиками
+#метод __add__ работает для наследников Product (в данном случае — Smartphone)
+#сохраняются специфические атрибуты (model, memory, color)
+#суммируется только quantity
+# тест подтверждает, что наследование не ломает логику сложения
 def test_smartphone_addition():
     s1 = Smartphone("iPhone", "15 Pro", 100000.0, 2, "high", "15 Pro", "256GB", "Black")
     s2 = Smartphone("iPhone", "15 Pro", 100000.0, 3, "high", "15 Pro", "256GB", "Black")
@@ -101,6 +110,7 @@ def test_smartphone_addition():
     assert result.memory == "256GB"
     assert isinstance(result, Smartphone)
 
+#Создание объекта LawnGrass
 def test_lawngrass_creation():
     g = LawnGrass("Газон", "Зелёная трава", 500.0, 4, "Россия", "14 дней", "Зелёный")
     assert g.name == "Газон"
@@ -111,8 +121,10 @@ def test_lawngrass_creation():
     assert g.germination_period == "14 дней"
     assert g.color == "Зелёный"
 
-
-
+# Сложение двух LawnGrass с одинаковыми параметрами.
+# убедиться, что __add__ работает для LawnGrass
+# убедиться, что сохраняются специфичные атрибуты (country, germination_period)
+# убедиться, что суммируется quantity
 def test_lawngrass_addition():
     g1 = LawnGrass("Газон", "Зелёная трава", 500.0, 4, "Россия", "14 дней", "Зелёный")
     g2 = LawnGrass("Газон", "Зелёная трава", 500.0, 6, "Россия", "14 дней", "Зелёный")
@@ -124,6 +136,10 @@ def test_lawngrass_addition():
     assert result.country == "Россия"
     assert isinstance(result, LawnGrass)
 
+# Добавление корректного продукта (Smartphone) в категорию.
+# Проверить, что продукт добавляется в список category.products
+# Проверить, что счётчик Category.product_count увеличивается на 1;
+# Проверить, что объект сохраняется без изменений
 def test_add_product_valid():
     category = Category("Электроника", "Смартфоны", [])
     phone = Smartphone("Pixel", "Android", 60000.0, 1, "mid", "7", "128GB", "White")
@@ -134,8 +150,10 @@ def test_add_product_valid():
     assert category.products[0] == phone
     assert Category.product_count == 1
 
-
-
+# Попытка добавить в категорию не объекты Product (строку, число, словарь).
+# Убедиться, что категория отклоняет некорректные типы
+# Убедиться, что выбрасывает TypeError с понятным сообщением;
+# Убедиться, что список продуктов остаётся пустым
 def test_add_non_product_raises_error():
     category = Category("Товары", "Разные", [])
 
