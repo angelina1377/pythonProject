@@ -16,21 +16,20 @@ class Product:
                                          #type(other) класс 2 объекта is not строгое сравнение
                                          #Данный метод запрещает складывать смартфон и газонную траву
             raise TypeError("Нельзя складывать товары разных типов")
-        #Создаем новый объект того же класса , что и self
-        new_product = self.__class__(# Создаем новый объект того же класса, что и self(например Smartphone)
-            name=self.name,
-            description=self.description,
-            price=self.price,
-            quantity=self.quantity + other.quantity
-        )
-        # Копируем специфические атрибуты(для подклассов)
-        #self.__dict__- словарь всех атрибутов объекта
-        #цикл проходит по всем ключам этого словаря(именам атрибутов)
-        #если атрибут-это "name", "description", "price", "quantity" пропускаем(они уже заданы в конструкторе)
-        #все остальные атрибуты(специфичные для подклассов) копируем
-        for attr in self.__dict__:
-            if attr not in ["name", "description", "price", "quantity"]:
-                setattr(new_product, attr, getattr(self, attr))#getattr(self, attr) получает значение атрибута attr из self
+            # Создаём экземпляр класса БЕЗ вызова __init__
+        new_product = self.__class__.__new__(self.__class__)#__new__ — это низкоуровневый метод создания экземпляра класса (вызывается до __init__)
+            #self.__class__  # → класс Smartphone
+            #self.__class__.__new__(self.__class__)  # → создаёт объект Smartphone без вызова __init__
+
+
+            # Проходит по всем парам(ключ, значения) и копируем ВСЕ атрибуты в новый объект
+        for key, value in self.__dict__.items():
+            setattr(new_product, key, value)
+
+            # Обновляем только quantity (суммируем)
+            # Все остальные атрибуты(имя, цена, модель и т.д.) остаются как у self
+        new_product.quantity = self.quantity + other.quantity
+
         return new_product
 
 class Smartphone(Product):
@@ -58,9 +57,24 @@ class Category:
     def __init__(self,name:str, description:str,products:list, category_count = None,product_count = None ):
         self.name = name
         self.description = description
-        self.products = products if products else []
+        self.products = []
         Category.category_count += 1
-        Category.product_count = len(products)
+        # Добавляем начальные продукты, не увеличивая счётчик повторно
+        for product in (products or []):
+            if product not in self.products:
+                self.products.append(product)
+                Category.product_count += 1 #Увеличиваем при добавлении
+
+    def add_product(self, product):
+        """Добавляет, что product - если он экземпляр Product или его наследник"""
+        if not isinstance(product, Product):
+            #Возвращает False, если product - например, строка, число или другой класс
+            raise TypeError("Можно добавлять только объекты класса Product или его наследников")
+        if product not in self.products:
+            self.products.append(product)
+            Category.product_count += 1
+
+
 
 if __name__ == '__main__':
     smartphone1 = Smartphone("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5, 95.5,

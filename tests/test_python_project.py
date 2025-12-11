@@ -1,7 +1,6 @@
 import pytest
 
-from src.python_project import Product, Category
-
+from src.python_project import Product, Category, Smartphone, LawnGrass
 
 def test_product_creation():
     # Создаем объект Product с конкретными параметрами
@@ -57,3 +56,103 @@ def test_category_empty_products():
     assert empty_category.name == "Пустые товары"  # Проверяем название
     assert empty_category.products == []  # Проверяем пустой список продуктов
     assert Category.product_count == 0  # Проверяем счетчик продуктов
+
+#
+def test_product_addition_same_type():
+    p1 = Product("Чайник", "Металлический", 1500.0, 3)
+    p2 = Product("Чайник", "Металлический", 1500.0, 7)
+    result = p1 + p2
+
+    assert result.name == "Чайник"
+    assert result.quantity == 10
+    assert result.price == 1500.0
+    assert isinstance(result, Product)
+
+def test_product_addition_different_types_raises_error():
+    p = Product("Книга", "Фантастика", 499.0, 10)
+    s = Smartphone("iPhone", "15 Pro", 100000.0, 2, "high", "15 Pro", "256GB", "Black")
+
+    with pytest.raises(TypeError) as excinfo:
+        p + s
+
+    assert "Нельзя складывать товары разных типов" in str(excinfo.value)
+
+def test_smartphone_creation():
+    s = Smartphone("iPhone", "15 Pro", 100000.0, 2, "high", "15 Pro", "256GB", "Black")
+    assert s.name == "iPhone"
+    assert s.description == "15 Pro"
+    assert s.price == 100000.0
+    assert s.quantity == 2
+    assert s.efficiency == "high"
+    assert s.model == "15 Pro"
+    assert s.memory == "256GB"
+    assert s.color == "Black"
+
+
+
+def test_smartphone_addition():
+    s1 = Smartphone("iPhone", "15 Pro", 100000.0, 2, "high", "15 Pro", "256GB", "Black")
+    s2 = Smartphone("iPhone", "15 Pro", 100000.0, 3, "high", "15 Pro", "256GB", "Black")
+    result = s1 + s2
+
+    assert result.name == "iPhone"
+    assert result.quantity == 5
+    assert result.model == "15 Pro"
+    assert result.memory == "256GB"
+    assert isinstance(result, Smartphone)
+
+def test_lawngrass_creation():
+    g = LawnGrass("Газон", "Зелёная трава", 500.0, 4, "Россия", "14 дней", "Зелёный")
+    assert g.name == "Газон"
+    assert g.description == "Зелёная трава"
+    assert g.price == 500.0
+    assert g.quantity == 4
+    assert g.country == "Россия"
+    assert g.germination_period == "14 дней"
+    assert g.color == "Зелёный"
+
+
+
+def test_lawngrass_addition():
+    g1 = LawnGrass("Газон", "Зелёная трава", 500.0, 4, "Россия", "14 дней", "Зелёный")
+    g2 = LawnGrass("Газон", "Зелёная трава", 500.0, 6, "Россия", "14 дней", "Зелёный")
+    result = g1 + g2
+
+
+    assert result.name == "Газон"
+    assert result.quantity == 10
+    assert result.country == "Россия"
+    assert isinstance(result, LawnGrass)
+
+def test_add_product_valid():
+    category = Category("Электроника", "Смартфоны", [])
+    phone = Smartphone("Pixel", "Android", 60000.0, 1, "mid", "7", "128GB", "White")
+
+    category.add_product(phone)
+
+    assert len(category.products) == 1
+    assert category.products[0] == phone
+    assert Category.product_count == 1
+
+
+
+def test_add_non_product_raises_error():
+    category = Category("Товары", "Разные", [])
+
+    with pytest.raises(TypeError) as excinfo:
+        category.add_product("Просто строка")
+
+    assert "Можно добавлять только объекты класса Product" in str(excinfo.value)
+
+
+    with pytest.raises(TypeError) as excinfo:
+        category.add_product(123)
+
+    assert "Можно добавлять только объекты класса Product" in str(excinfo.value)
+
+    with pytest.raises(TypeError) as excinfo:
+        category.add_product({"name": "Товар"})
+
+    assert "Можно добавлять только объекты класса Product" in str(excinfo.value)
+
+
