@@ -2,6 +2,13 @@ import pytest
 
 from src.python_project import Product, Category, Smartphone, LawnGrass
 
+@pytest.fixture(autouse=True)
+def reset_category_counts():
+    """Обнуляет счётчики перед каждым тестом"""
+    Category.category_count = 0
+    Category.product_count = 0
+
+
 def test_product_creation():
     # Создаем объект Product с конкретными параметрами
     p = Product("Телефон", "Смартфон с 128 ГБ", 29999.0, 5)
@@ -41,7 +48,7 @@ def test_category_counters():
 
     # Проверяем работу счетчиков
     assert Category.category_count == 1  # Должна быть создана 1 категория
-    assert Category.product_count == len([p1])  # Должен быть учтен 1 продукт
+    assert Category.product_count == 1  # Должен быть учтен 1 продукт
 
 
 def test_category_empty_products():
@@ -228,3 +235,68 @@ def test_add_product_invalid_types():
 
     with pytest.raises(TypeError):
         category.add_product([])  # Список
+
+
+
+
+def test_product_negative_price():
+    with pytest.raises(ValueError, match="Цена не может быть отрицательной"):
+        Product("Товар", "Описание", -100.0, 5)
+
+def test_product_negative_quantity():
+    with pytest.raises(ValueError, match="Количество не может быть отрицательным"):
+        Product("Товар", "Описание", 100.0, -5)
+
+
+def test_add_different_types_raises_error():
+    p = Product("Книга", "Фантастика", 499.0, 10)
+    s = Smartphone("iPhone", "15 Pro", 100000.0, 2, "high", "15 Pro", "256GB", "Black")
+
+    with pytest.raises(TypeError, match="Нельзя складывать товары разных типов"):
+        p + s
+
+
+def test_add_non_product_raises_error():
+    category = Category("Товары", "Разные", [])
+
+    with pytest.raises(TypeError, match="Можно добавлять только объекты класса Product"):
+        category.add_product("Не продукт")
+
+
+def test_category_init_with_products():
+    # Обнуляем счётчики перед тестом
+    Category.category_count = 0
+    Category.product_count = 0
+
+    p1 = Product("Товар 1", "Описание 1", 100.0, 5)
+    p2 = Product("Товар 2", "Описание 2", 200.0, 3)
+    category = Category("Категория", "Описание", [p1, p2])
+
+    assert len(category.products) == 2
+    assert Category.product_count == 2  # Теперь будет 2, а не 3
+
+def test_smartphone_specific_fields():
+    s = Smartphone("iPhone", "15 Pro", 100000.0, 2, "high", "15 Pro", "256GB", "Black")
+    assert s.efficiency == "high"
+    assert s.model == "15 Pro"
+
+def test_lawngrass_specific_fields():
+    g = LawnGrass("Газон", "Зелёная трава", 500.0, 4, "Россия", "14 дней", "Зелёный")
+    assert g.country == "Россия"
+    assert g.germination_period == "14 дней"
+
+def test_add_duplicate_product():
+    # Обнуляем счётчики
+    Category.category_count = 0
+    Category.product_count = 0
+
+    category = Category("Товары", "Описание", [])
+    p1 = Product("Товар", "Описание", 100.0, 5)
+    p2 = Product("Товар", "Описание", 100.0, 5)  # Тот же продукт
+
+
+    category.add_product(p1)
+    category.add_product(p2)  # Не должен добавиться
+
+    assert len(category.products) == 1
+    assert Category.product_count == 1  # Теперь будет 1, а не 4

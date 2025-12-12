@@ -64,20 +64,30 @@ class Category:
         self.products = []
         Category.category_count += 1
         # Добавляем начальные продукты, не увеличивая счётчик повторно
-        for product in (products or []):
-            if product not in self.products:
-                self.products.append(product)
-                Category.product_count += 1 #Увеличиваем при добавлении
+        if products:
+            for product in products:
+                self.add_product(product)
+
 
     def add_product(self, product):
         """Добавляет, что product - если он экземпляр Product или его наследник"""
         if not isinstance(product, Product):
             #Возвращает False, если product - например, строка, число или другой класс
             raise TypeError("Можно добавлять только объекты класса Product или его наследников")
-        if product not in self.products:
+            # Ручная проверка на дубликат: сравниваем поля
+        is_duplicate = False
+        for existing_product in self.products:
+            if (existing_product.name == product.name and
+                    existing_product.description == product.description and
+                    existing_product.price == product.price and
+                    existing_product.quantity == product.quantity):
+                is_duplicate = True
+                break
+
+            # Если продукта с такими же полями нет — добавляем
+        if not is_duplicate:
             self.products.append(product)
             Category.product_count += 1
-
 
 
 if __name__ == '__main__':
