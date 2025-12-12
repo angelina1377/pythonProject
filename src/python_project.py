@@ -5,6 +5,10 @@ class Product:
     quantity:int
 
     def __init__(self, name:str, description:str, price:float, quantity:int):
+        if price < 0:
+            raise ValueError("Цена не может быть отрицательной")
+        if quantity <0:
+            raise ValueError("Количество не может быть отрицательным")
         self.name = name
         self.description = description
         self.price = price

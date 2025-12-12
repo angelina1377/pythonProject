@@ -174,3 +174,57 @@ def test_add_non_product_raises_error():
     assert "Можно добавлять только объекты класса Product" in str(excinfo.value)
 
 
+# Тест на отрицательные quantity и price
+def test_product_negative_quantity_raises_error():
+    """Проверка, что отрицательная quantity вызывает ошибку."""
+    with pytest.raises(ValueError):
+        Product("Товар", "Описание", 100.0, -5)
+
+def test_product_negative_price_raises_error():
+    """Проверка, что отрицательная price вызывает ошибку."""
+    with pytest.raises(ValueError):
+        Product("Товар", "Описание", -100.0, 5)
+
+# Тест на копирование всех атрибутов в __add__(для наследников)
+def test_smartphone_addition_copies_all_attributes():
+    """Проверка, что при сложении Smartphone копируются ВСЕ атрибуты."""
+    s1 = Smartphone("iPhone", "15 Pro", 100000.0, 2, "high", "15 Pro", "256GB", "Black")
+    s2 = Smartphone("iPhone", "15 Pro", 100000.0, 3, "high", "15 Pro", "256GB", "Black")
+    result = s1 + s2
+
+    # Проверяем ВСЕ атрибуты, включая наследные
+    assert result.name == s1.name
+    assert result.description == s1.description
+    assert result.price == s1.price
+    assert result.efficiency == s1.efficiency
+    assert result.model == s1.model
+    assert result.memory == s1.memory
+    assert result.color == s1.color
+    assert result.quantity == 5  # Только quantity суммируется
+
+# Тест на пустые строки и None
+def test_product_empty_strings():
+    """Проверка создания Product с пустыми строками."""
+    p = Product("", "", 100.0, 5)
+    assert p.name == ""
+    assert p.description == ""
+
+def test_product_none_values():
+    """Проверка, что None не вызывает ошибок (если допустимо)."""
+    p = Product(None, None, 100.0, 5)  # Если None допустим
+    assert p.name is None
+    assert p.description is None
+
+# Тест на isinstance с крайними случаями
+def test_add_product_invalid_types():
+    """Проверка add_product с None, object(), и другими типами."""
+    category = Category("Товары", "Разные", [])
+
+    with pytest.raises(TypeError):
+        category.add_product(None)
+
+    with pytest.raises(TypeError):
+        category.add_product(object())
+
+    with pytest.raises(TypeError):
+        category.add_product([])  # Список
