@@ -21,10 +21,12 @@ poetry install
  Модуль для создания классов Product и Category
 ## Методы 
  
- | Метод          | Аргументы                                                                                                     | Описание               |
- |----------------|---------------------------------------------------------------------------------------------------------------|------------------------|
- | Class Product  | ```def __init__(self, name:str, description:str, price:float, quantity:int)```                                | Класс со свойствами    |
- | Class Category | ```def __init__(self,name:str, description:str,products:list, category_count = None,product_count = None )``` | Класс со свойствами    |
+ | Метод          | Аргументы                                                                                                     | Описание                                                                      |
+ |----------------|---------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------|
+ | Class Product  | ```def __init__(self, name:str, description:str, price:float, quantity:int)```                                | Класс со свойствами                                                           |
+ | Class Product  | ```def __add__(self, other)```                                                                                | Метод складывания товаров только из одинаковых классов продуктов              |
+ | Class Category | ```def __init__(self,name:str, description:str,products:list, category_count = None,product_count = None )``` | Класс со свойствами                                                           |
+ | Class Category | ```def add_product(self, product)```                                                                          | Метод, который добавляет product,если он экземпляр Product или его наследника |
 ## Модуль utils.py
  Модуль чтения из json файла и создание объектов классов
 ## Методы
@@ -44,9 +46,26 @@ poetry install
 Тестирование правильности работы счетчиков
 * Функция ```test_category_empty_products```:
 Тестирование правильности работы с пустой категорией
+* Функция ```test_product_addition_same_type```:
+Тестирование сложения двух объектов Product одного типа (одинаковые название, цена, описание)
+* Функция ```test_product_addition_different_types_raises_error```:
+Тестирование попытки сложить Product и Smartphone (разные классы).
+* Функция ```test_smartphone_creation```:
+Тестирование корректности создания объекта Smartphone
+* Функция ```test_smartphone_addition```:
+Тестируется сложение двух Smartphone с одинаковыми характеристиками
+* Функция ```test_lawngrass_creation```:
+Тестирование создание объекта класса LawnGrass
+* Функция ```test_lawngrass_addition```:
+Тестирование сложения двух LawnGrass с одинаковыми параметрами
+* Функция ```test_add_product_valid```:
+Тестирование добавления корректного продукта (Smartphone) в категорию
+*  Функция ```test_add_non_product_raises_error```:
+Тестирование попытки добавить в категорию не объекты Product (строку, число, словарь) 
 
-### Модуль widget
-* Функция ```test_mask_account_card```:
--Тесты для проверки, что функция корректно распознает и применяет нужный тип маскировки
-* Функция ```test_get_date```:
--Тестирование правильности преобразования даты
+* Функция ```test_lawngrass_addition```:
+
+* Функция ```test_add_product_valid```:
+
+* Функция ```test_add_non_product_raises_error```:
+

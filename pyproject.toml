@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 [project]
 name = "pythonproject1"
 version = "0.1.0"
@@ -11,7 +11,7 @@ requires-python = ">=2.7"
 dependencies = [
 ]
 
-=======
+
 [tool.poetry]
 name = "pythonproject"
 version = "0.1.0"
@@ -26,16 +26,15 @@ packages = [
 [tool.poetry.dependencies]
 python = "^3.11"
 pytest = "^8.0"
->>>>>>> origin/develop
+
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
-<<<<<<< HEAD
-=======
+
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 testpaths = ["tests"]
 addopts = "-v --color=yes"
->>>>>>> origin/develop
+
