@@ -1,17 +1,17 @@
-<<<<<<< HEAD
+
 [project]
-name = "pythonproject1"
+name = "pythonProject"
 version = "0.1.0"
 description = ""
 authors = [
     {name = "Ангелина Павленко",email = "angel-ina@mail.ru"}
 ]
 readme = "README.md"
-requires-python = ">=2.7"
+requires-python = ">=3.8"
 dependencies = [
 ]
 
-=======
+
 [tool.poetry]
 name = "pythonproject"
 version = "0.1.0"
@@ -26,16 +26,15 @@ packages = [
 [tool.poetry.dependencies]
 python = "^3.11"
 pytest = "^8.0"
->>>>>>> origin/develop
+
 
 [build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
-build-backend = "poetry.core.masonry.api"
-<<<<<<< HEAD
-=======
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 testpaths = ["tests"]
 addopts = "-v --color=yes"
->>>>>>> origin/develop
+
