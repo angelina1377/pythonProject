@@ -494,10 +494,6 @@ def test_full_workflow():
     assert "iPhone" in order.display_info()
 
 
-
-
-
-
 #Тест для Product.update_quantity (включая граничные случаи)
 def test_product_update_quantity():
     """Проверяет обновление количества товара."""
