@@ -1,7 +1,7 @@
 import pytest
 
 from src.python_project import Product, Category, Smartphone, LawnGrass
-from src.python_project import Order
+from src.python_project import Order, ZeroQuantityError
 
 
 @pytest.fixture(autouse=True)
@@ -560,10 +560,7 @@ def test_product_zero_price():
     p = Product("Бесплатный образец", "Тест", 0.0, 5)
     assert p.price == 0.0
 
-def test_product_zero_quantity():
-    """Проверяет, что количество может быть нулевым."""
-    p = Product("Товар", "Описание", 100.0, 0)
-    assert p.quantity == 0
+
 
 def test_product_whitespace_name():
     """Проверяет, что имя с пробелами не считается пустым."""
@@ -575,23 +572,108 @@ def test_product_whitespace_description():
     p = Product("Телевизор", "  LED TV  ", 30000.0, 1)
     assert p.description == "  LED TV  "
 
-# Тест для get_total_cost с нулевым количеством
-def test_product_get_total_cost_zero_quantity():
-    """Проверяет расчёт общей стоимости при нулевом количестве."""
-    p = Product("Книга", "Фантастика", 499.0, 0)
-    assert p.get_total_cost() == 0.0
 
-#Тест для Order — изменение количества после создания
-def test_order_update_quantity_after_creation():
-    """Проверяет, что можно изменить количество в заказе после создания."""
-    p = Product("Книга", "Фантастика", 499.0, 10)
+
+# Проверка валидации Product
+def test_product_creation_valid():
+    p = Product("Книга", "Фантастика", 499.0, 5)
+    assert p.quantity == 5
+
+def test_product_invalid_quantity_zero():
+    with pytest.raises(ValueError, match="Товар с нулевым количеством не может быть добавлен"):
+        Product("Книга", "Фантастика", 499.0, 0)
+
+def test_product_invalid_quantity_negative():
+    with pytest.raises(ValueError, match="Количество не может быть отрицательным"):
+        Product("Книга", "Фантастика", 499.0, -1)
+
+# Проверка Order
+def test_order_creation_with_valid_product():
+    p = Product("Книга", "Фантастика", 499.0, 5)
     order = Order(p, 2)
+    assert order.quantity == 2
+    assert order.total_cost == 998.0
 
-    # В реальной системе может быть метод update_quantity
-    # Если его нет — пропустите этот тест или добавьте метод в Order
-    # Для примера предположим, что можно менять напрямую:
-    order.quantity = 5
-    order.total_cost = order.product.price * order.quantity
-    assert order.quantity == 5
-    assert order.total_cost == 499.0 * 5
+# Проверка Category
+def test_category_add_valid_product():
+    category = Category("Книги", "Литература", [])
+    p = Product("Книга", "Фантастика", 499.0, 5)
+    category.add_product(p)
+    assert len(category.products) == 1
+    assert category.products[0] == p
 
+
+def test_middle_price_single_product():
+    """Проверяет средний ценник для категории с одним товаром."""
+    product = Product("Книга", "Фантастика", 499.0, 10)
+    category = Category("Книги", "Литература", [product])
+
+    assert category.middle_price() == 499.0
+
+
+def test_middle_price_multiple_products():
+    """Проверяет средний ценник для категории с несколькими товарами."""
+    products = [
+        Product("Книга 1", "Фантастика", 499.0, 10),
+        Product("Книга 2", "Детектив", 399.0, 5),
+        Product("Книга 3", "Роман", 599.0, 8)
+    ]
+    category = Category("Книги", "Литература", products)
+
+    expected_avg = (499.0 + 399.0 + 599.0) / 3
+    assert category.middle_price() == expected_avg
+
+
+def test_middle_price_empty_category():
+    """Проверяет, что для пустой категории возвращается 0.0."""
+    category = Category("Пустые", "Нет товаров", [])
+    assert category.middle_price() == 0.0
+
+
+
+def test_middle_price_identical_prices():
+    """Проверяет случай, когда все товары имеют одинаковую цену."""
+    products = [
+        Product("Чай", "Черный", 250.0, 3),
+        Product("Кофе", "Арабика", 250.0, 2),
+        Product("Какао", "Порошок", 250.0, 4)
+    ]
+    category = Category("Напитки", "Горячие", products)
+
+    assert category.middle_price() == 250.0
+
+
+def test_middle_price_decimal_precision():
+    """Проверяет точность вычислений при дробных ценах."""
+    products = [
+        Product("Яблоко", "Свежее", 1.50, 10),
+        Product("Банан", "Спелый", 2.25, 5)
+    ]
+    category = Category("Фрукты", "Свежие", products)
+
+    expected_avg = (1.50 + 2.25) / 2  # 1.875
+    assert abs(category.middle_price() - expected_avg) < 1e-9  # Проверка с учетом погрешности float
+
+
+def test_middle_price_large_numbers():
+    """Проверяет работу с большими ценами."""
+    products = [
+        Product("Авто", "Премиум", 5000000.0, 1),
+        Product("Дом", "Коттедж", 10000000.0, 1)
+    ]
+    category = Category("Недвижимость", "Элитная", products)
+
+    expected_avg = (5000000.0 + 10000000.0) / 2
+    assert category.middle_price() == expected_avg
+
+
+def test_middle_price_after_product_removal():
+    """Проверяет пересчёт среднего после удаления товара (косвенно через изменение списка)."""
+    products = [
+        Product("Стул", "Деревянный", 3000.0, 2),
+        Product("Стол", "Стеклянный", 8000.0, 1)
+    ]
+    category = Category("Мебель", "Домашняя", products)
+
+    # Удаляем первый товар (имитация изменения списка)
+    category.products = [products[1]]

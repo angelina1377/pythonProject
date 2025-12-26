@@ -21,23 +21,25 @@ poetry install
  Модуль для создания классов Product и Category
 | Метод                       | Аргументы                                                                                                     | Описание                                                                          |   
  |----------------------------|---------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------|
- | Class Product              | ```def __init__(self, name:str, description:str, price:float, quantity:int)```                                | Класс со свойствами                                                               |
- | Class Product              | ```def __add__(self, other)```                                                                                | Метод складывания товаров только из одинаковых классов продуктов                  |
- | Class Product              | ``` def get_total_cost(self) -> float```                                                                      | Реализация абстрактного метода - вычисляет общую стоимость                        |
- | Class Product              | ```def display_info(self) -> str```                                                                           | Реализация абстрактного метода - возвращает строку с инфо о товаре                |
- | Class Product              | ```def update_quantity(self, amount: int) -> None```                                                          | Реализация абстрактного метода — обновляет количество товара                      |
- | Class Product              | ```def update_quantity(self, amount: int) -> None```                                                          | Реализация абстрактного метода — обновляет количество товара                      |
- | class Order(BaseEntity)    | ```def __init__(self, product, quantity: int)```                                                              | Класс «Заказ»: хранит товар, количество и итоговую стоимость                      |
- | class Smartphone(Product)  | ```def __init__(self, name, description, price, quantity, efficiency, model, memory, color)```                | Класс наследник  от исходного класса  Product                                     |
- | class LawnGrass(Product)   | ```def __init__(self, name, description, price, quantity, country, germination_period, color) ```             | Класс наследник  от исходного класса  Product                                     |
- | Class Category             | ```def add_product(self, product)```                                                                          | Метод, который добавляет product,если он экземпляр Product или его наследника     |
- | Class CreationLogger       | ```def log_creation```                                                                                        | Класс-миксин, будет добавлять логирование создания объектов(доп.функциональность) |
- | Class BaseProduct(ABC)     | ```def get_total_cost(self)```                                                                                | Метод, который Возвращает общую стоимость товара (цена * количество)              |
- | Class BaseProduct(ABC)     | ```def display_info(self)```                                                                                  | Метод, который Отображает основную информацию о товаре                            |
- | Class BaseProduct(ABC)     | ```def update_quantity(self, amount: int)```                                                                  | Метод, который Обновляет количество товара                                        |
- | Class class BaseEntity(ABC)| ```def __init__(self, name: str, description: str)```                                                         | Абстрактный базовый класс, который создает шаблон для наследников: __init__ инициализирует name — название сущности и description — описание сущности|
- | Class class BaseEntity(ABC)| ```def display_info(self) -> str```                                                                           | Метод, который задает единый интерфейс для вывода информации о сущности|
- | Class class BaseEntity(ABC)| ```def __str__(self) -> str```                                                                                | Метод, который определяет как объект будет преобразовываться в строку, просто возвращает результат display_info()|
+ | Class Product                           | ```def __init__(self, name:str, description:str, price:float, quantity:int)```                                | Класс со свойствами                                                               |
+ | Class Product                           | ```def __add__(self, other)```                                                                                | Метод складывания товаров только из одинаковых классов продуктов                  |
+ | Class Product                           | ``` def get_total_cost(self) -> float```                                                                      | Реализация абстрактного метода - вычисляет общую стоимость                        |
+ | Class Product                           | ```def display_info(self) -> str```                                                                           | Реализация абстрактного метода - возвращает строку с инфо о товаре                |
+ | Class Product                           | ```def update_quantity(self, amount: int) -> None```                                                          | Реализация абстрактного метода — обновляет количество товара                      |
+ | Class Product                           | ```def update_quantity(self, amount: int) -> None```                                                          | Реализация абстрактного метода — обновляет количество товара                      |
+ | class Order(BaseEntity)                 | ```def __init__(self, product, quantity: int)```                                                              | Класс «Заказ»: хранит товар, количество и итоговую стоимость                      |
+ | class Smartphone(Product)               | ```def __init__(self, name, description, price, quantity, efficiency, model, memory, color)```                | Класс наследник  от исходного класса  Product                                     |
+ | class LawnGrass(Product)                | ```def __init__(self, name, description, price, quantity, country, germination_period, color) ```             | Класс наследник  от исходного класса  Product                                     |
+ | Class Category                          | ```def add_product(self, product)```                                                                          | Метод, который добавляет product,если он экземпляр Product или его наследника     |
+ | Class Category                          | ```def middle_price(self) -> float```                                                                         | Метод, который подсчитывает средний ценник всех товаров в категории               |
+ | Class CreationLogger                    | ```def log_creation```                                                                                        | Класс-миксин, будет добавлять логирование создания объектов(доп.функциональность) |
+ | Class BaseProduct(ABC)                  | ```def get_total_cost(self)```                                                                                | Метод, который Возвращает общую стоимость товара (цена * количество)              |
+ | Class BaseProduct(ABC)                  | ```def display_info(self)```                                                                                  | Метод, который Отображает основную информацию о товаре                            |
+ | Class BaseProduct(ABC)                  | ```def update_quantity(self, amount: int)```                                                                  | Метод, который Обновляет количество товара                                        |
+ | Class  BaseEntity(ABC)                  | ```def __init__(self, name: str, description: str)```                                                         | Абстрактный базовый класс, который создает шаблон для наследников: __init__ инициализирует name — название сущности и description — описание сущности|
+ | Class  BaseEntity(ABC)                  | ```def display_info(self) -> str```                                                                           | Метод, который задает единый интерфейс для вывода информации о сущности|
+ | Class  BaseEntity(ABC)                  | ```def __str__(self) -> str```                                                                                | Метод, который определяет как объект будет преобразовываться в строку, просто возвращает результат display_info()|
+ | Class ZeroQuantityError(Exception)      | ```def __init__(self, message="Товар с нулевым количеством не может быть добавлен")```                        | Класс исключение для случая, когда товар имеет нулевое количество|
 ## Модуль utils.py
  Модуль чтения из json файла и создание объектов классов
 ## Методы
@@ -46,6 +48,7 @@ poetry install
 |--------------------------|--------------------------------------------|------------------|-----------------------------------------|
 | read_json                | ```read_json``` str: Строка                | dict: Словарь    | Функция чтения из json файла            |
 | create_objects_from_json | ```create_objects_from_json``` str: Строка |                  | Функция преобразования в объекты класса |
+
 
 # Тестирование
 # Тестирование
@@ -156,7 +159,7 @@ poetry install
 Тестирует, что заказ допускает количество больше, чем в наличии (бизнес‑логика)
 * Функция ```def test_product_zero_price()```
 Тестирует допустимость нулевой цены товара
-* Функция ```def test_product_zero_quantity()```
+* Функция ```test_middle_price_single_product()```
 Тестирует допустимость нулевого количества товара
 * Функция ```def test_product_whitespace_name()```
 Тестирует, что имя с пробелами не считается пустым (валидация)
@@ -166,3 +169,19 @@ poetry install
 Тестирует расчёт общей стоимости при нулевом количестве (должно быть 0.0)
 * Функция ```def test_order_update_quantity_after_creation()```
 Тестирует изменение количества в заказе после его создания (пересчёт стоимости)
+* Функция ```def test_middle_price_single_product()```
+Тестирует базовый случай: 1 товар → средний = цене товара
+* Функция ```def test_middle_price_multiple_products()```
+Тестирует расчёт для нескольких товаров с разными ценами
+* Функция ```def test_middle_price_empty_category()```
+Тестирует что пустая категория возвращает 0.0 (обработка ZeroDivisionError)
+* Функция ```def test_middle_price_with_zero_quantity_products()```
+Тестирует количество товара (quantity) не влияет на расчёт среднего (учитывается только price)
+* Функция ```def test_middle_price_identical_prices()```
+Тестирует что при одинаковых ценах результат равен этой цене.
+* Функция ```def test_middle_price_decimal_precision()```
+Тестирует точность вычислений для дробных значений
+* Функция ```def test_middle_price_large_numbers()```
+Тестирует работу с крупными суммами (исключает переполнение)
+* Функция ```def test_middle_price_after_product_removal()```
+Тестирует что метод корректно реагирует на изменение списка products.
