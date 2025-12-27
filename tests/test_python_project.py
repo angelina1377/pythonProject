@@ -1,7 +1,7 @@
 import pytest
 
 from src.python_project import Product, Category, Smartphone, LawnGrass
-from src.python_project import Order, ZeroQuantityError
+from src.python_project import Order, ZeroQuantityError, BaseEntity
 
 
 @pytest.fixture(autouse=True)
@@ -677,3 +677,64 @@ def test_middle_price_after_product_removal():
 
     # Удаляем первый товар (имитация изменения списка)
     category.products = [products[1]]
+
+
+
+# Тест для ZeroQuantityError
+def test_zero_quantity_error():
+    """Проверяет исключение при нулевом количестве."""
+    with pytest.raises(ZeroQuantityError) as excinfo:
+        raise ZeroQuantityError()
+    assert "Товар с нулевым количеством не может быть добавлен" in str(excinfo.value)
+
+
+
+
+
+# Тесты для Smartphone.display_info() и LawnGrass.display_info()
+def test_smartphone_display_info():
+    """Проверяет вывод информации для Smartphone."""
+    s = Smartphone("iPhone", "15 Pro", 100000.0, 2, "high", "15 Pro", "256GB", "Black")
+    info = s.display_info()
+    assert "iPhone (15 Pro): 15 Pro, цена — 100000.0 руб." in info
+    assert "память — 256GB ГБ, цвет — Black" in info
+
+    assert "в наличии — 2 шт." in info
+
+def test_lawngrass_display_info():
+    """Проверяет вывод информации для LawnGrass."""
+    g = LawnGrass("Газон", "Зелёная трава", 500.0, 4, "Россия", "14 дней", "Зелёный")
+    info = g.display_info()
+    assert "Газон: Зелёная трава, страна производства — Россия" in info
+    assert "срок прорастания — 14 дней, цвет — Зелёный" in info
+    assert "цена — 500.0 руб., в наличии — 4 шт." in info
+
+# Тест для CreationLogger.log_creation() с разными типами
+def test_creation_logger_with_smartphone(capsys):
+    """Проверяет логирование создания Smartphone."""
+    s = Smartphone("iPhone", "15 Pro", 100000.0, 2, "high", "15 Pro", "256GB", "Black")
+    captured = capsys.readouterr()
+    assert "Smartphone('iPhone', '15 Pro', 100000.0, 2, 'high', '15 Pro', '256GB', 'Black')" in captured.out
+
+
+def test_creation_logger_with_lawngrass(capsys):
+    """Проверяет логирование создания LawnGrass."""
+    g = LawnGrass("Газон", "Зелёная трава", 500.0, 4, "Россия", "14 дней", "Зелёный")
+    captured = capsys.readouterr()
+    assert "LawnGrass('Газон', 'Зелёная трава', 500.0, 4)" in captured.out
+
+
+
+
+# Тест для Category.add_product() с None в списке продуктов
+def test_category_init_with_none_product():
+    """Проверяет инициализацию категории с None в списке продуктов."""
+    with pytest.raises(TypeError, match="Можно добавлять только объекты класса Product"):
+        Category("Товары", "Описание", [None])
+
+# Тест для Product с пробелами в name и description
+def test_product_name_with_leading_trailing_spaces():
+    """Проверяет, что пробелы в name сохраняются (не обрезаются)."""
+    p = Product("  iPhone  ", "  Смартфон  ", 100000.0, 2)
+    assert p.name == "  iPhone  "
+    assert p.description == "  Смартфон  "

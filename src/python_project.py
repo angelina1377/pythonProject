@@ -152,7 +152,7 @@ class LawnGrass(Product):
     def display_info(self) -> str:
         """Полиморфизм: переопределённый метод отображения информации — специфичный для газонной травы."""
         return (f"{self.name}: {self.description}, страна производства — {self.country}, "
-                f"срок прорастания — {self.germination_period} дней, цвет — {self.color}, "
+                f"срок прорастания — {self.germination_period}, цвет — {self.color}, "
                 f"цена — {self.price} руб., в наличии — {self.quantity} шт.")
 
 
